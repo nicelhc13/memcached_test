@@ -4,7 +4,7 @@
 #include <functional>
 
 // 8 * 100000000000
-#define NUM_KEYS 10000000000
+#define NUM_KEYS 100000
 
 using KeyTy = uint32_t;
 using ValueTy = uint32_t;
@@ -57,8 +57,11 @@ int main(int argc, char* argv[]) {
 
   memc = memcached_create(NULL);
 
-  servers = memcached_server_list_append(servers, "localhost", 11212, &rc);
-  rc = memcached_server_push(memc, servers);
+  for (int i = 1; i < argc; ++i) {
+    fprintf(stderr, " %dth address: %s\n", i, argv[i]);
+    servers = memcached_server_list_append(servers, argv[i], 11212, &rc);
+  }
+  rc= memcached_server_push(memc, servers);
 
   if (rc == MEMCACHED_SUCCESS) {
     fprintf(stderr, "Adding server successfully.\n");
